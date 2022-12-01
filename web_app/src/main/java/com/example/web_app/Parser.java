@@ -14,7 +14,7 @@ public class Parser {
         Document doc = Jsoup.connect(query).get();
     }
 
-    public String getCompanySite(String site, String query) throws IOException {
+    private String getCompanySite(String site, String query) throws IOException {
         Document doc = Jsoup.connect("https://www.google.com/search?q=site:" + site + " " + query).get();
         String siteUrl = doc.select("div." + "yuRUbf").select("a").attr("href");
         return siteUrl;
@@ -39,7 +39,7 @@ public class Parser {
 
     public String getCompanyLogo(String query) throws IOException {
         Document doc = Jsoup.connect(new Parser().getCompanyWikipedia(query)).get();
-        String logo = doc.select("span.wikidata-claim").select("img").attr("src");
+        String logo = doc.select("div.mw-parser-output").select("img").attr("src");
         return logo.replace("//", "");
     }
 }
