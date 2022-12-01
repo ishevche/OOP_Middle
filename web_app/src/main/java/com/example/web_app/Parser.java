@@ -39,12 +39,7 @@ public class Parser {
 
     public String getCompanyLogo(String query) throws IOException {
         Document doc = Jsoup.connect(new Parser().getCompanyWikipedia(query)).get();
-//        String logo = doc.select("span.wikidata-claim").select("img").attr("src");
-//        System.out.println(logo.replace("//", ""));
-//        System.out.println(doc);
-//        System.out.println(doc.select("span.wikidata-claim").select("img").attr("src"));
-//        System.out.println(doc.select("span.wikidata-claim").select("a").attr("href"));
-        return "";
-//        return doc.select("span.mw-page-title-main").text();
+        String logo = doc.select("span.wikidata-claim").select("img").attr("src");
+        return logo.replace("//", "");
     }
 }
