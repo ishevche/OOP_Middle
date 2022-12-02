@@ -7,7 +7,5 @@ public abstract class Component implements ComponentWithCompany{
     protected Container container;
     private final String domain;
 
-    protected Component(String domain) {
-        this.domain = domain;
-    }
+    protected Component(String domain) {this.domain = domain;}
 }

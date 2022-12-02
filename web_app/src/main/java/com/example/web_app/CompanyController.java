@@ -4,8 +4,6 @@ import com.example.web_app.chain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-
 @RestController
 @RequestMapping("api/company")
 public class CompanyController {
@@ -16,12 +14,14 @@ public class CompanyController {
         this.companyService = companyService;
     }
 
-    @RequestMapping(path = "/api/company/{domain}")
-    public Company getCompany(@PathVariable("domain") String domain) throws IOException {
+    @RequestMapping(path = "{domain}")
+    public Company getCompany(@PathVariable("domain") String domain){
         DataBaseCompany dataBaseCompany = new DataBaseCompany(domain, companyService);
         ParserCompany parserCompany = new ParserCompany(domain);
         dataBaseCompany.addChild(parserCompany);
-        return dataBaseCompany.getCompany();
+        Company result = dataBaseCompany.getCompany();
+        addCompany(result);
+        return result;
     }
 
     @PostMapping
