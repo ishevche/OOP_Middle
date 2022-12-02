@@ -20,7 +20,7 @@ public class Parser {
     private Document wiki;
     private String wikiLink;
     private BrandFetch brandFetch;
-    private JSONObject PDAJson;
+    private JSONObject PDAJson = new JSONObject("{\"data\":[{\"employee_count\":227,\"location\":{\"continent\":\"europe\",\"geo\":null,\"country\":\"ukraine\",\"street_address\":null,\"metro\":null,\"name\":\"ukraine\",\"locality\":null,\"address_line_2\":null,\"region\":null,\"postal_code\":null}}]}");
     private final Company company = new Company();
 
     public Parser(String domain){
@@ -127,8 +127,11 @@ public class Parser {
         connection.setRequestMethod("GET");
         connection.setRequestProperty("X-Api-Key", API_KEY);
         connection.connect();
-        String text = new Scanner(connection.getInputStream()).useDelimiter("\\Z").next();
-        this.PDAJson = new JSONObject(text);
+        int responseCode = connection.getResponseCode():
+        if (responseCode == 200) {
+            String text = new Scanner(connection.getInputStream()).useDelimiter("\\Z").next();
+            this.PDAJson = new JSONObject(text);
+        }
     }
 
     public void fetchInformation() {
