@@ -26,17 +26,9 @@ public class CompanyController {
             return company.get();
         }
         else {
-            Parser parser = new Parser();
-            return Company.builder()
-                    .name(parser.getCompanyName(domain))
-                    .facebook(parser.getCompanyFacebook(domain))
-                    .twitter(parser.getCompanyTwitter(domain))
-                    .domainName(domain)
-                    .logoLink(parser.getCompanyLogo(domain))
-                    .iconLink(parser.getCompanyIcon(domain))
-                    .emplooyees(parser.getCompanyEmployees(domain))
-                    .address(parser.getCompanyAddress(domain))
-                    .build();
+            Parser parser = new Parser(domain);
+            parser.fetchInformation();
+            return parser.buildCompany();
         }
     }
 
