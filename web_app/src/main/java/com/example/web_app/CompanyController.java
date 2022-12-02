@@ -20,16 +20,10 @@ public class CompanyController {
 
     @RequestMapping(path = "/api/company/{domain}")
     public Company getCompany(@PathVariable("domain") String domain) throws IOException {
-        Optional<Company> company = companyService.getCompany(domain);
-
-        if (company.isPresent()){
-            return company.get();
-        }
-        else {
-            Parser parser = new Parser(domain);
-            parser.fetchInformation();
-            return parser.buildCompany();
-        }
+        DataBaseCompany dataBaseCompany = new DataBaseCompany(domain, companyService);
+        ParserCompany parserCompany = new ParserCompany(domain);
+        
+        return dataBaseCompany.getCompany();
     }
 
     @PostMapping
