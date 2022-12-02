@@ -1,9 +1,19 @@
 package com.example.web_app;
 
+
+import lombok.SneakyThrows;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
 
 public class Parser {
     private String domain;
@@ -68,8 +78,27 @@ public class Parser {
         this.company.setEmplooyees("100-500");
     }
 
-    void getCompanyAddress(){
-        this.company.setAddress("Kozelnytska");
+    void getCompanyAddress() throws IOException {
+        String API_KEY = System.getenv("PDL_API_KEY");
+        String query = URLEncoder.encode("SELECT NAME FROM COMPANY WHERE WEBSITE='" + this.domain + "'", StandardCharsets.UTF_8);
+        URL url = new URL("https://api.peopledatalabs.com/v5/company/search?sql=" + query);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setRequestProperty("X-Api-Key", API_KEY);
+        connection.connect();
+        String text = new Scanner(connection.getInputStream()).useDelimiter("\\Z").next();
+        JSONObject jsonObject = new JSONObject(text);
+        ArrayList<String> JSONNames = new ArrayList<String>(Arrays.asList("continent", "country", "street_address", "address_line_2", "geo"));
+        ArrayList<String> output = new ArrayList<String>();
+        for (int i = 0; i < JSONNames.size(); i++){
+            if (!jsonObject.getJSONArray("data").getJSONObject(0).getJSONObject("location").isNull(JSONNames.get(i))){
+                output.add(jsonObject.getJSONArray("data").getJSONObject(0).getJSONObject("location").getString(JSONNames.get(i)));
+            }
+            if (i == 1){
+                output = new ArrayList<>(Arrays.asList(String.join(", ", output)));
+            }
+        }
+        this.company.setAddress(String.join("\n", output));
     }
 
     public void fetchInformation() {
