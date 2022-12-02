@@ -7,7 +7,8 @@ import org.jsoup.nodes.Document;
 import java.io.IOException;
 
 public class Parser {
-    private Company company;
+    private boolean wikiParsed = false;
+    private Document wiki;
 
     @SneakyThrows
     public void getCompanyPageInfo(String query){
@@ -33,13 +34,19 @@ public class Parser {
     }
 
     public String getCompanyName(String query) throws IOException {
-        Document doc = Jsoup.connect(new Parser().getCompanyWikipedia(query)).get();
-        return doc.select("span.mw-page-title-main").text();
+        if (!wikiParsed){
+            this.wiki = Jsoup.connect(new Parser().getCompanyWikipedia(query)).get();
+            wikiParsed = true;
+        }
+        return wiki.select("span.mw-page-title-main").text();
     }
 
     public String getCompanyLogo(String query) throws IOException {
-        Document doc = Jsoup.connect(new Parser().getCompanyWikipedia(query)).get();
-        String logo = doc.select("div.mw-parser-output").select("img").attr("src");
+        if (!wikiParsed){
+            this.wiki = Jsoup.connect(new Parser().getCompanyWikipedia(query)).get();
+            wikiParsed = true;
+        }
+        String logo = wiki.select("div.mw-parser-output").select("img").attr("src");
         return logo.replace("//", "");
     }
 }
