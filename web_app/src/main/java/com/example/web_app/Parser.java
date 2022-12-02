@@ -6,11 +6,11 @@ import org.jsoup.nodes.Document;
 import java.io.IOException;
 
 public class Parser {
-    private String domain;
+    private final String domain;
     private boolean wikiParsed = false;
     private Document wiki;
     private String wikiLink;
-    private Company company = new Company();
+    private final Company company = new Company();
 
     public Parser(String domain){
         this.domain = domain;
@@ -19,8 +19,7 @@ public class Parser {
 
     private String getCompanySite(String site) throws IOException {
         Document doc = Jsoup.connect("https://www.google.com/search?q=site:" + site + " " + this.domain).get();
-        String siteUrl = doc.select("div." + "yuRUbf").select("a").attr("href");
-        return siteUrl;
+        return doc.select("div." + "yuRUbf").select("a").attr("href");
     }
 
     private String getCompanyWikipedia() throws IOException {
@@ -50,7 +49,8 @@ public class Parser {
             this.wiki = Jsoup.connect(this.wikiLink).get();
             wikiParsed = true;
         }
-        String logo = wiki.select("table.infobox").select("img").attr("src");
+        String logo = wiki.select("table.infobox")
+                .select("img").attr("src");
         this.company.setLogoLink(logo.replace("//", ""));
     }
 
