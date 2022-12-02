@@ -20,7 +20,7 @@ public class Parser {
     private Document wiki;
     private String wikiLink;
     private BrandFetch brandFetch;
-    private JSONObject PDAJson = new JSONObject("{\"data\":[{\"employee_count\":\"null\",\"location\":{\"continent\":\"null\",\"geo\":null,\"country\":\"null\",\"street_address\":null,\"metro\":null,\"name\":\"null\",\"locality\":null,\"address_line_2\":null,\"region\":null,\"postal_code\":null}}]}");
+    private JSONObject PDAJson = new JSONObject("{\"data\":[{\"employee_count\":null,\"location\":{\"continent\":\"null\",\"geo\":null,\"country\":\"null\",\"street_address\":null,\"metro\":null,\"name\":\"null\",\"locality\":null,\"address_line_2\":null,\"region\":null,\"postal_code\":null}}]}");
     private final Company company = new Company();
 
     public Parser(String domain){
@@ -98,7 +98,7 @@ public class Parser {
     }
 
     void getCompanyEmployees(){
-        if (PDAJson.getJSONArray("data").getJSONObject(0).get("employee_count") != null) {
+        if (!PDAJson.getJSONArray("data").getJSONObject(0).isNull("employee_count")) {
             this.company.setEmplooyees(Integer.toString(PDAJson.getJSONArray("data").getJSONObject(0).getInt("employee_count")));
         } else{
             this.company.setEmplooyees("Not Found");
