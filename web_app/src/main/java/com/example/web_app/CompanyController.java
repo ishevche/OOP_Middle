@@ -1,12 +1,10 @@
 package com.example.web_app;
 
-import com.fasterxml.jackson.databind.JsonSerializer;
+import com.example.web_app.chain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.Objects;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("api/company")
@@ -22,7 +20,7 @@ public class CompanyController {
     public Company getCompany(@PathVariable("domain") String domain) throws IOException {
         DataBaseCompany dataBaseCompany = new DataBaseCompany(domain, companyService);
         ParserCompany parserCompany = new ParserCompany(domain);
-        
+        dataBaseCompany.addChild(parserCompany);
         return dataBaseCompany.getCompany();
     }
 
