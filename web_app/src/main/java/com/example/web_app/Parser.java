@@ -98,7 +98,7 @@ public class Parser {
     }
 
     void getCompanyEmployees(){
-        this.company.setEmplooyees(PDAJson.getJSONArray("data").getJSONObject(0).getString("employee_count"));
+        this.company.setEmplooyees(Integer.toString(PDAJson.getJSONArray("data").getJSONObject(0).getInt("employee_count")));
     }
 
     void getCompanyAddress() throws IOException {
