@@ -12,5 +12,7 @@ public class ParserCompany{
 
     public Company getCompany() {
         Parser parser = new Parser(domain);
+        parser.fetchInformation();
+        return parser.buildCompany();
     }
 }
