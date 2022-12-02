@@ -77,7 +77,7 @@ public class Parser {
             }
             String logo = wiki.select("table.infobox")
                     .select("img").attr("src");
-            this.company.setLogoLink(logo.replace("//", ""));
+            this.company.setLogoLink(logo.replace("//", "https://"));
         }
     }
 
@@ -93,7 +93,7 @@ public class Parser {
             }
             String logo = wiki.select("table.infobox")
                     .select("img").attr("src");
-            this.company.setIconLink(logo.replace("//", ""));
+            this.company.setIconLink(logo.replace("//", "https://"));
         }
     }
 
