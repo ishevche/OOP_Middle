@@ -127,7 +127,7 @@ public class Parser {
         connection.setRequestMethod("GET");
         connection.setRequestProperty("X-Api-Key", API_KEY);
         connection.connect();
-        int responseCode = connection.getResponseCode():
+        int responseCode = connection.getResponseCode();
         if (responseCode == 200) {
             String text = new Scanner(connection.getInputStream()).useDelimiter("\\Z").next();
             this.PDAJson = new JSONObject(text);
