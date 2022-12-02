@@ -73,14 +73,19 @@ public class Parser {
         this.company.setAddress("Kozelnytska");
     }
 
-    public void fetchInformation() throws IOException {
-        getCompanyName();
-        getCompanyFacebook();
-        getCompanyTwitter();
-        getCompanyLogo();
-        getCompanyIcon();
-        getCompanyAddress();
-        getCompanyEmployees();
+    public void fetchInformation() {
+        try {
+            getCompanyName();
+            getCompanyFacebook();
+            getCompanyTwitter();
+            getCompanyLogo();
+            getCompanyIcon();
+            getCompanyAddress();
+            getCompanyEmployees();
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Company buildCompany(){
