@@ -7,63 +7,83 @@ import org.jsoup.nodes.Document;
 import java.io.IOException;
 
 public class Parser {
+    private String domain;
     private boolean wikiParsed = false;
     private Document wiki;
+    private String wikiLink;
+    private Company company = new Company();
 
-    @SneakyThrows
-    public void getCompanyPageInfo(String query){
-        Document doc = Jsoup.connect(query).get();
+    public Parser(String domain){
+        this.domain = domain;
+        this.company.setDomainName(domain);
     }
 
-    private String getCompanySite(String site, String query) throws IOException {
-        Document doc = Jsoup.connect("https://www.google.com/search?q=site:" + site + " " + query).get();
+    private String getCompanySite(String site) throws IOException {
+        Document doc = Jsoup.connect("https://www.google.com/search?q=site:" + site + " " + this.domain).get();
         String siteUrl = doc.select("div." + "yuRUbf").select("a").attr("href");
         return siteUrl;
     }
 
-    public String getCompanyWikipedia(String query) throws IOException {
-        return getCompanySite("wikipedia.org", query);
+    private String getCompanyWikipedia() throws IOException {
+        return getCompanySite("wikipedia.org");
     }
 
-    public String getCompanyFacebook(String query) throws IOException {
-        return getCompanySite("facebook.com", query);
+    void getCompanyFacebook() throws IOException {
+        this.company.setFacebook(getCompanySite("facebook.com"));
     }
 
-    public String getCompanyTwitter(String query) throws IOException {
-        return getCompanySite("twitter.com", query);
+    void getCompanyTwitter() throws IOException {
+        this.company.setTwitter(getCompanySite("twitter.com"));
     }
 
-    public String getCompanyName(String query) throws IOException {
+    void getCompanyName() throws IOException {
         if (!wikiParsed){
-            this.wiki = Jsoup.connect(new Parser().getCompanyWikipedia(query)).get();
+            this.wikiLink = getCompanyWikipedia();
+            this.wiki = Jsoup.connect(this.wikiLink).get();
             wikiParsed = true;
         }
-        return wiki.select("span.mw-page-title-main").text();
+        this.company.setName(wiki.select("span.mw-page-title-main").text());
     }
 
-    public String getCompanyLogo(String query) throws IOException {
+    void getCompanyLogo() throws IOException {
         if (!wikiParsed){
-            this.wiki = Jsoup.connect(new Parser().getCompanyWikipedia(query)).get();
-            wikiParsed = true;
-        }
-        String logo = wiki.select("table.infobox").select("img").attr("src");
-        return logo.replace("//", "");
-    }
-
-    public String getCompanyIcon(String query) throws IOException {
-        if (!wikiParsed){
-            this.wiki = Jsoup.connect(new Parser().getCompanyWikipedia(query)).get();
+            this.wikiLink = getCompanyWikipedia();
+            this.wiki = Jsoup.connect(this.wikiLink).get();
             wikiParsed = true;
         }
         String logo = wiki.select("table.infobox").select("img").attr("src");
-        return logo.replace("//", "");
+        this.company.setLogoLink(logo.replace("//", ""));
     }
 
-    public String getCompanyEmployees(String query){
-        return "100-500";
+    void getCompanyIcon() throws IOException {
+        if (!wikiParsed){
+            this.wikiLink = getCompanyWikipedia();
+            this.wiki = Jsoup.connect(this.wikiLink).get();
+            wikiParsed = true;
+        }
+        String logo = wiki.select("table.infobox").select("img").attr("src");
+        this.company.setIconLink(logo.replace("//", ""));
     }
 
-    public String getCompanyAddress(String query){
-        return "Kozelnytska";
+    void getCompanyEmployees(){
+        this.company.setEmplooyees("100-500");
+    }
+
+    void getCompanyAddress(){
+        this.company.setAddress("Kozelnytska");
+    }
+
+    public void fetchInformation() throws IOException {
+        getCompanyName();
+        getCompanyFacebook();
+        getCompanyTwitter();
+        getCompanyLogo();
+        getCompanyIcon();
+        getCompanyAddress();
+        getCompanyEmployees();
+    }
+
+    public Company buildCompany(){
+        return this.company;
     }
 }

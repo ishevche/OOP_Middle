@@ -22,7 +22,7 @@ public class CompanyController {
     public Company getCompany(@PathVariable("domain") String domain) throws IOException {
         DataBaseCompany dataBaseCompany = new DataBaseCompany(domain, companyService);
         ParserCompany parserCompany = new ParserCompany(domain);
-
+        
         return dataBaseCompany.getCompany();
     }
 
