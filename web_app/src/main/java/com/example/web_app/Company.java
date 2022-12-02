@@ -19,7 +19,7 @@ public class Company {
     private String facebook;
     private String logoLink;
     private String iconLink;
-    private int emplooyeesMin;
-    private int emplooyeesMax;
+    private int employeesMin;
+    private int employeesMax;
     private String address;
 }
