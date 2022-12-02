@@ -1,12 +1,8 @@
 package com.example.web_app;
 
-import com.fasterxml.jackson.databind.JsonSerializer;
+import com.example.web_app.chain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.util.Objects;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("api/company")
@@ -18,12 +14,14 @@ public class CompanyController {
         this.companyService = companyService;
     }
 
-    @RequestMapping(path = "/api/company/{domain}")
-    public Company getCompany(@PathVariable("domain") String domain) throws IOException {
+    @RequestMapping(path = "{domain}")
+    public Company getCompany(@PathVariable("domain") String domain){
         DataBaseCompany dataBaseCompany = new DataBaseCompany(domain, companyService);
         ParserCompany parserCompany = new ParserCompany(domain);
-        
-        return dataBaseCompany.getCompany();
+        dataBaseCompany.addChild(parserCompany);
+        Company result = dataBaseCompany.getCompany();
+        addCompany(result);
+        return result;
     }
 
     @PostMapping

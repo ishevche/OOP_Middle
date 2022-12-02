@@ -1,5 +1,6 @@
 package com.example.web_app;
 
+
 import lombok.SneakyThrows;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
