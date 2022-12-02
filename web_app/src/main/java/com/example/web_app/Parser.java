@@ -46,7 +46,7 @@ public class Parser {
             this.wiki = Jsoup.connect(new Parser().getCompanyWikipedia(query)).get();
             wikiParsed = true;
         }
-        String logo = wiki.select("div.mw-parser-output").select("img").attr("src");
+        String logo = wiki.select("table.infobox").select("img").attr("src");
         return logo.replace("//", "");
     }
 
@@ -55,7 +55,7 @@ public class Parser {
             this.wiki = Jsoup.connect(new Parser().getCompanyWikipedia(query)).get();
             wikiParsed = true;
         }
-        String logo = wiki.select("div.mw-parser-output").select("img").attr("src");
+        String logo = wiki.select("table.infobox").select("img").attr("src");
         return logo.replace("//", "");
     }
 
