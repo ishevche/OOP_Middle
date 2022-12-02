@@ -1,6 +1,5 @@
 package com.example.web_app;
 
-import lombok.SneakyThrows;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
