@@ -49,4 +49,21 @@ public class Parser {
         String logo = wiki.select("div.mw-parser-output").select("img").attr("src");
         return logo.replace("//", "");
     }
+
+    public String getCompanyIcon(String query) throws IOException {
+        if (!wikiParsed){
+            this.wiki = Jsoup.connect(new Parser().getCompanyWikipedia(query)).get();
+            wikiParsed = true;
+        }
+        String logo = wiki.select("div.mw-parser-output").select("img").attr("src");
+        return logo.replace("//", "");
+    }
+
+    public String getCompanyEmployees(String query){
+        return "100-500";
+    }
+
+    public String getCompanyAddress(String query){
+        return "Kozelnytska";
+    }
 }

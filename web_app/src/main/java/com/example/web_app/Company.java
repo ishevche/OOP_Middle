@@ -1,10 +1,7 @@
 package com.example.web_app;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,7 +24,6 @@ public class Company {
     private String facebook;
     private String logoLink;
     private String iconLink;
-    private int emplooyeesMin;
-    private int emplooyeesMax;
+    private String emplooyees;
     private String address;
 }
