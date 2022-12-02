@@ -1,5 +1,6 @@
 package com.example.web_app;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,14 +11,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+
 @Table
 @Entity
 @NoArgsConstructor
-@Getter @Setter @AllArgsConstructor
+@AllArgsConstructor
+@Getter @Setter @Builder
 public class Company {
-    @Id
-    @GeneratedValue
+    @Id @GeneratedValue
     private Long id;
+
     private String domainName;
     private String name;
     private String twitter;
