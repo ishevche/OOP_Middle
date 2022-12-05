@@ -60,6 +60,7 @@ public class Parser {
     void getCompanyName() throws IOException {
         if (brandFetch.getName() != null) {
             company.setName(brandFetch.getName());
+            return;
         } else if (!wikiParsed) {
             wikiLink = getCompanyWikipedia();
             wiki = Jsoup.connect(wikiLink).get();
