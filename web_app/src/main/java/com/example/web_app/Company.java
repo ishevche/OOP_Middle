@@ -7,10 +7,7 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 
 @Table
@@ -21,7 +18,7 @@ import javax.persistence.Table;
 public class Company {
     @Id @GeneratedValue
     private Long id;
-
+    @Column(unique=true)
     private String domainName;
     private String name;
     private String twitter;
