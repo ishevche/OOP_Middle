@@ -15,6 +15,7 @@ import java.util.Scanner;
 @Getter
 public class BrandFetch {
     private final String domain;
+    private String name = null;
     private String icon_url = null;
     private String logo_url = null;
     private String twitter_url = null;
@@ -51,6 +52,9 @@ public class BrandFetch {
         if (jsonObject.has("logos")) {
             parseLogos(jsonObject.getJSONArray("logos"));
         }
+        if (jsonObject.has("name")) {
+            name = jsonObject.optString("name", null);
+        }
     }
 
     private void parseLogos(JSONArray logos) {
@@ -60,12 +64,12 @@ public class BrandFetch {
 
             if (!logo_object.has("type")) {continue;}
 
-            if ("icon".equals(logo_object.getString("type"))) {
+            if ("icon".equals(logo_object.optString("type", null))) {
                 icon_url = logo_object.getJSONArray("formats")
-                                .getJSONObject(0).getString("src");
-            } else if ("logo".equals(logo_object.getString("type"))) {
+                        .getJSONObject(0).optString("src", null);
+            } else if ("logo".equals(logo_object.optString("type", null))) {
                 logo_url = logo_object.getJSONArray("formats")
-                                .getJSONObject(0).getString("src");
+                        .getJSONObject(0).optString("src", null);
             }
         }
     }
@@ -76,10 +80,10 @@ public class BrandFetch {
 
             JSONObject link_object = (JSONObject) link;
 
-            if ("facebook".equals(link_object.getString("name"))) {
-                facebook_url = link_object.getString("url");
-            } else if ("twitter".equals(link_object.getString("name"))) {
-                twitter_url = link_object.getString("url");
+            if ("facebook".equals(link_object.optString("name", null))) {
+                facebook_url = link_object.optString("url", null);
+            } else if ("twitter".equals(link_object.optString("name", null))) {
+                twitter_url = link_object.optString("url", null);
             }
         }
     }

@@ -25,6 +25,6 @@ public class Company {
     private String facebook;
     private String logoLink;
     private String iconLink;
-    private String emplooyees;
+    private String employees;
     private String address;
 }

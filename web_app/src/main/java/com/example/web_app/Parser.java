@@ -1,6 +1,5 @@
 package com.example.web_app;
 
-
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -12,25 +11,29 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 public class Parser {
     private final String domain;
-    private boolean wikiParsed = false;
+    private boolean wikiParsed;
     private Document wiki;
     private String wikiLink;
-    private BrandFetch brandFetch;
-    private JSONObject PDAJson = new JSONObject("{\"data\":[{\"employee_count\":null,\"location\":{\"continent\":\"null\",\"geo\":null,\"country\":\"null\",\"street_address\":null,\"metro\":null,\"name\":\"null\",\"locality\":null,\"address_line_2\":null,\"region\":null,\"postal_code\":null}}]}");
-    private final Company company = new Company();
+    private final BrandFetch brandFetch;
+    private JSONObject PDAJson;
+    private final Company company;
 
-    public Parser(String domain){
+    public Parser(String domain) {
         this.domain = domain;
-        this.company.setDomainName(domain);
-        this.brandFetch = new BrandFetch(domain);
+        wikiParsed = false;
+        company = new Company();
+        company.setDomainName(domain);
+        brandFetch = new BrandFetch(domain);
+        PDAJson = new JSONObject("{\"data\":[{\"employee_count\":null," + "\"location\":{\"continent\":\"null\",\"geo\":null,\"country\":" + "\"null\",\"street_address\":null,\"metro\":null,\"name\":\"null" + "\",\"locality\":null,\"address_line_2\":null,\"region\":null," + "\"postal_code\":null}}]}");
     }
 
     private String getCompanySite(String site) throws IOException {
-        Document doc = Jsoup.connect("https://www.google.com/search?q=site:" + site + " " + this.domain).get();
+        Document doc = Jsoup.connect("https://www.google.com/search?q=site:" + site + " " + domain).get();
         return doc.select("div." + "yuRUbf").select("a").attr("href");
     }
 
@@ -39,84 +42,80 @@ public class Parser {
     }
 
     void getCompanyFacebook() throws IOException {
-        if (brandFetch.getFacebook_url() != null){
-            this.company.setFacebook(brandFetch.getFacebook_url());
-        }
-        else {
-            this.company.setFacebook(getCompanySite("facebook.com"));
+        if (brandFetch.getFacebook_url() != null) {
+            company.setFacebook(brandFetch.getFacebook_url());
+        } else {
+            company.setFacebook(getCompanySite("facebook.com"));
         }
     }
 
     void getCompanyTwitter() throws IOException {
-        if (brandFetch.getTwitter_url() != null){
-            this.company.setTwitter(brandFetch.getTwitter_url());
-        }
-        else {
-            this.company.setTwitter(getCompanySite("twitter.com"));
+        if (brandFetch.getTwitter_url() != null) {
+            company.setTwitter(brandFetch.getTwitter_url());
+        } else {
+            company.setTwitter(getCompanySite("twitter.com"));
         }
     }
 
     void getCompanyName() throws IOException {
-        if (!wikiParsed){
-            this.wikiLink = getCompanyWikipedia();
-            this.wiki = Jsoup.connect(this.wikiLink).get();
+        if (brandFetch.getName() != null) {
+            company.setName(brandFetch.getName());
+        } else if (!wikiParsed) {
+            wikiLink = getCompanyWikipedia();
+            wiki = Jsoup.connect(wikiLink).get();
             wikiParsed = true;
         }
-        this.company.setName(wiki.select("span.mw-page-title-main").text());
+        company.setName(wiki.select("span.mw-page-title-main").text());
     }
 
     void getCompanyLogo() throws IOException {
-        if (brandFetch.getLogo_url() != null){
-            this.company.setLogoLink(brandFetch.getLogo_url());
-        }
-        else {
+        if (brandFetch.getLogo_url() != null) {
+            company.setLogoLink(brandFetch.getLogo_url());
+        } else {
             if (!wikiParsed) {
-                this.wikiLink = getCompanyWikipedia();
-                this.wiki = Jsoup.connect(this.wikiLink).get();
+                wikiLink = getCompanyWikipedia();
+                wiki = Jsoup.connect(wikiLink).get();
                 wikiParsed = true;
             }
-            String logo = wiki.select("table.infobox")
-                    .select("img").attr("src");
-            this.company.setLogoLink(logo.replace("//", "https://"));
+            String logo = wiki.select("table.infobox").select("img").attr("src");
+            company.setLogoLink(logo.replace("//", "https://"));
         }
     }
 
     void getCompanyIcon() throws IOException {
-        if (brandFetch.getIcon_url() != null){
-            this.company.setIconLink(brandFetch.getIcon_url());
-        }
-        else {
+        if (brandFetch.getIcon_url() != null) {
+            company.setIconLink(brandFetch.getIcon_url());
+        } else {
             if (!wikiParsed) {
-                this.wikiLink = getCompanyWikipedia();
-                this.wiki = Jsoup.connect(this.wikiLink).get();
+                wikiLink = getCompanyWikipedia();
+                wiki = Jsoup.connect(wikiLink).get();
                 wikiParsed = true;
             }
-            String logo = wiki.select("table.infobox")
-                    .select("img").attr("src");
-            this.company.setIconLink(logo.replace("//", "https://"));
+            String logo = wiki.select("table.infobox").select("img").attr("src");
+            company.setIconLink(logo.replace("//", "https://"));
         }
     }
 
-    void getCompanyEmployees(){
+    void getCompanyEmployees() {
         if (!PDAJson.getJSONArray("data").getJSONObject(0).isNull("employee_count")) {
-            this.company.setEmplooyees(Integer.toString(PDAJson.getJSONArray("data").getJSONObject(0).getInt("employee_count")));
-        } else{
-            this.company.setEmplooyees("Not Found");
+            company.setEmployees(Integer.toString(PDAJson.getJSONArray("data").getJSONObject(0).getInt("employee_count")));
+        } else {
+            company.setEmployees("Not Found");
         }
     }
 
     void getCompanyAddress() throws IOException {
-        ArrayList<String> JSONNames = new ArrayList<String>(Arrays.asList("continent", "country", "street_address", "address_line_2", "geo"));
-        ArrayList<String> output = new ArrayList<String>();
-        for (int i = 0; i < JSONNames.size(); i++){
-            if (!PDAJson.getJSONArray("data").getJSONObject(0).getJSONObject("location").isNull(JSONNames.get(i))){
+        ArrayList<String> JSONNames = new ArrayList<>(Arrays.asList("continent", "country", "street_address", "address_line_2", "geo"));
+        ArrayList<String> output = new ArrayList<>();
+        for (int i = 0; i < JSONNames.size(); i++) {
+            if (!PDAJson.getJSONArray("data").getJSONObject(0).getJSONObject("location").isNull(JSONNames.get(i))) {
                 output.add(PDAJson.getJSONArray("data").getJSONObject(0).getJSONObject("location").getString(JSONNames.get(i)));
             }
-            if (i == 1){
-                output = new ArrayList<>(Arrays.asList(String.join(", ", output)));
+            if (i == 1) {
+                output = new ArrayList<>(List.of(String.join(", ", output)));
             }
         }
-        this.company.setAddress(String.join("\n", output));
+        company.setAddress(String.join("\n", output));
     }
 
     private void fetchPDA() throws IOException, NoSuchFieldException {
@@ -124,7 +123,7 @@ public class Parser {
         if (API_KEY == null) {
             throw new NoSuchFieldException("You should provide PDL_API_KEY environment variable");
         }
-        String query = URLEncoder.encode("SELECT NAME FROM COMPANY WHERE WEBSITE='" + this.domain + "'", StandardCharsets.UTF_8);
+        String query = URLEncoder.encode("SELECT NAME FROM COMPANY WHERE WEBSITE='" + domain + "'", StandardCharsets.UTF_8);
         URL url = new URL("https://api.peopledatalabs.com/v5/company/search?sql=" + query);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
@@ -133,7 +132,7 @@ public class Parser {
         int responseCode = connection.getResponseCode();
         if (responseCode == 200) {
             String text = new Scanner(connection.getInputStream()).useDelimiter("\\Z").next();
-            this.PDAJson = new JSONObject(text);
+            PDAJson = new JSONObject(text);
         }
     }
 
@@ -148,13 +147,12 @@ public class Parser {
             getCompanyIcon();
             getCompanyAddress();
             getCompanyEmployees();
-        }
-        catch (IOException | NoSuchFieldException e) {
+        } catch (IOException | NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public Company buildCompany(){
-        return this.company;
+    public Company buildCompany() {
+        return company;
     }
 }
