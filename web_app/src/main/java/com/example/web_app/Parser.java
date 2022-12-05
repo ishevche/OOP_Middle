@@ -119,8 +119,11 @@ public class Parser {
         this.company.setAddress(String.join("\n", output));
     }
 
-    private void fetchPDA() throws IOException {
+    private void fetchPDA() throws IOException, NoSuchFieldException {
         String API_KEY = System.getenv("PDL_API_KEY");
+        if (API_KEY == null) {
+            throw new NoSuchFieldException("You should provide PDL_API_KEY environment variable");
+        }
         String query = URLEncoder.encode("SELECT NAME FROM COMPANY WHERE WEBSITE='" + this.domain + "'", StandardCharsets.UTF_8);
         URL url = new URL("https://api.peopledatalabs.com/v5/company/search?sql=" + query);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -146,7 +149,7 @@ public class Parser {
             getCompanyAddress();
             getCompanyEmployees();
         }
-        catch (IOException e) {
+        catch (IOException | NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
     }

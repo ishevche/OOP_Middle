@@ -9,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.NoSuchFileException;
 import java.util.Scanner;
 
 @Getter
@@ -25,15 +26,21 @@ public class BrandFetch {
 
     public void fetchInfo() throws IOException {
         String API_KEY = System.getenv("BRAND_FETCH_API_KEY");
+        if (API_KEY == null) {
+            throw new NoSuchFileException("You should provide BRAND_FETCH_API_KEY environment variable");
+        }
         String query = URLEncoder.encode(domain, StandardCharsets.UTF_8);
         URL url = new URL("https://api.brandfetch.io/v2/brands/" + query);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
         connection.setRequestProperty("Authorization", "Bearer " + API_KEY);
         connection.connect();
-        String text = new Scanner(connection.getInputStream())
-                .useDelimiter("\\Z").next();
-        parseJson(text);
+        int responseCode = connection.getResponseCode();
+        if (responseCode == 200) {
+            String text = new Scanner(connection.getInputStream())
+                    .useDelimiter("\\Z").next();
+            parseJson(text);
+        }
     }
 
     private void parseJson(String jsonString) {
